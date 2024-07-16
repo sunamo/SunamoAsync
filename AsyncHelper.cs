@@ -1,4 +1,5 @@
 namespace SunamoAsync;
+
 public class AsyncHelper
 {
     public static Dictionary<string, object> MergeDictionaries(Dictionary<string, Action> potentiallyValid,
