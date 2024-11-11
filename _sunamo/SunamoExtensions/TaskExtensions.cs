@@ -18,15 +18,7 @@ internal static class TaskExtensions
         task.ContinueWith(t =>
             {
                 var aggException = t.Exception.Flatten();
-
-                StringBuilder sb = new();
-
-                foreach (var exception in aggException.InnerExceptions)
-                {
-                    throw new Exception("");
-                    //sb.AppendLine(Exceptions.TextOfExceptions(exception));
-                }
-                throw new Exception(sb.ToString());
+                throw new Exception(Exceptions.TextOfExceptions(aggException));
             },
             TaskContinuationOptions.OnlyOnFaulted);
     }

@@ -12,3 +12,4 @@ global using System.Reflection;
 global using System.Net;
 global using SunamoAsync._sunamo;
 global using System.Diagnostics.CodeAnalysis;
+global using SunamoAsync;
