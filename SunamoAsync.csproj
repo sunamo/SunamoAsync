@@ -22,6 +22,12 @@
     <DefineConstants>$(DefineConstants);ASYNC;SunamoAsync;SunamoAsync.csproj</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Remove="_sunamo\CA.cs" />
+    <Compile Remove="_sunamo\FS.cs" />
+    <Compile Remove="_sunamo\SH.cs" />
+    <Compile Remove="_sunamo\TypesDelegates.cs" />
+  </ItemGroup>
+  <ItemGroup>
     <None Include="readme.md" Pack="True" PackagePath="." />
   </ItemGroup>
   <ItemGroup>

@@ -8,8 +8,28 @@ public class AsyncHelper
     {
     }
 
+    public static async Task
+
+        InvokeFuncTaskOrAction(object o)
+    {
+        var t = o.GetType();
+        if (t == typeof(Action))
+        {
+            (o as Action).Invoke();
+        }
+        else if (t == typeof(Func<Task>))
+        {
+            var taskVoid = o as Func<Task>;
+#if ASYNC
+            await
+#endif
+                taskVoid();
+            ;
+        }
+    }
+
     public static Dictionary<string, object> MergeDictionaries(Dictionary<string, Action> potentiallyValid,
-        Dictionary<string, Func<Task>> potentiallyValidAsync)
+            Dictionary<string, Func<Task>> potentiallyValidAsync)
     {
         var actionsMerge = new Dictionary<string, object>(potentiallyValid.Count + potentiallyValidAsync.Count);
         if (potentiallyValid != null)
@@ -19,30 +39,6 @@ public class AsyncHelper
             foreach (var item in potentiallyValidAsync)
                 actionsMerge.Add(item.Key, item.Value);
         return actionsMerge;
-    }
-
-    public static
-#if ASYNC
-        async Task
-#else
-        void
-#endif
-        InvokeFuncTaskOrAction(object o)
-    {
-        var t = o.GetType();
-        if (t == TypesDelegates.tAction)
-        {
-            (o as Action).Invoke();
-        }
-        else if (t == TypesDelegates.tFuncTask)
-        {
-            var taskVoid = o as Func<Task>;
-#if ASYNC
-            await
-#endif
-                taskVoid();
-            ;
-        }
     }
 
     /// <summary>
@@ -63,26 +59,21 @@ public class AsyncHelper
         var t2 = t.GetAwaiter();
         result = t2.GetResult();
 
-        #endregion
+        #endregion 1. ConfigureAwait(true)
 
         #region 2. Sync
 
         //result = task.Result;
 
-        #endregion
+        #endregion 2. Sync
 
         #region 3. await
 
         //result = Await<T>(task);
 
-        #endregion
+        #endregion 3. await
 
         return result;
-    }
-
-    private async Task<T> Await<T>(Task<T> t)
-    {
-        return await t;
     }
 
     public void GetResult(Task task)
@@ -91,121 +82,9 @@ public class AsyncHelper
         task.Conf();
     }
 
-    private async Task Await(Task t)
-    {
-        await t;
-    }
-
-    /// <summary>
-    ///     Execute's an T> method which has a void return value synchronously
-    /// </summary>
-    /// <param name="task">T> method to execute</param>
-    public void RunSyncWithoutReturnValue(Func<Task> task)
-    {
-        var oldContext = SynchronizationContext.Current;
-        var synch = new ExclusiveSynchronizationContext();
-        SynchronizationContext.SetSynchronizationContext(synch);
-        synch.Post(async _ =>
-        {
-            try
-            {
-                ci.GetResult(task());
-            }
-            catch (Exception e)
-            {
-                synch.InnerException = e;
-                throw;
-            }
-            finally
-            {
-                synch.EndMessageLoop();
-            }
-        }, null);
-        synch.BeginMessageLoop();
-        SynchronizationContext.SetSynchronizationContext(oldContext);
-        synch.Dispose();
-    }
-
     public async Task RunAsync(Task task)
     {
         await task;
-    }
-
-    public void RunSyncWithoutReturnValue<T1>(Func<T1, Task> task, T1 a1)
-    {
-        var oldContext = SynchronizationContext.Current;
-        var synch = new ExclusiveSynchronizationContext();
-        SynchronizationContext.SetSynchronizationContext(synch);
-        synch.Post(async _ =>
-        {
-            try
-            {
-                ci.GetResult(task(a1));
-            }
-            catch (Exception e)
-            {
-                synch.InnerException = e;
-                throw;
-            }
-            finally
-            {
-                synch.EndMessageLoop();
-            }
-        }, null);
-        synch.BeginMessageLoop();
-        SynchronizationContext.SetSynchronizationContext(oldContext);
-    }
-
-    public void RunSyncWithoutReturnValue<T1, T2>(Func<T1, T2, Task> task, T1 a1, T2 a2)
-    {
-        var oldContext = SynchronizationContext.Current;
-        var synch = new ExclusiveSynchronizationContext();
-        SynchronizationContext.SetSynchronizationContext(synch);
-        synch.Post(async _ =>
-        {
-            try
-            {
-                ci.GetResult(task(a1, a2));
-            }
-            catch (Exception e)
-            {
-                synch.InnerException = e;
-                throw;
-            }
-            finally
-            {
-                synch.EndMessageLoop();
-            }
-        }, null);
-        synch.BeginMessageLoop();
-        SynchronizationContext.SetSynchronizationContext(oldContext);
-        synch.Dispose();
-    }
-
-    public void RunSyncWithoutReturnValue<T1, T2, T3>(Func<T1, T2, T3, Task> task, T1 a1, T2 a2, T3 a3)
-    {
-        var oldContext = SynchronizationContext.Current;
-        var synch = new ExclusiveSynchronizationContext();
-        SynchronizationContext.SetSynchronizationContext(synch);
-        synch.Post(async _ =>
-        {
-            try
-            {
-                ci.GetResult(task(a1, a2, a3));
-            }
-            catch (Exception e)
-            {
-                synch.InnerException = e;
-                throw;
-            }
-            finally
-            {
-                synch.EndMessageLoop();
-            }
-        }, null);
-        synch.BeginMessageLoop();
-        SynchronizationContext.SetSynchronizationContext(oldContext);
-        synch.Dispose();
     }
 
     /// <summary>
@@ -307,6 +186,123 @@ public class AsyncHelper
         return ret;
     }
 
+    /// <summary>
+    ///     Execute's an T> method which has a void return value synchronously
+    /// </summary>
+    /// <param name="task">T> method to execute</param>
+    public void RunSyncWithoutReturnValue(Func<Task> task)
+    {
+        var oldContext = SynchronizationContext.Current;
+        var synch = new ExclusiveSynchronizationContext();
+        SynchronizationContext.SetSynchronizationContext(synch);
+        synch.Post(async _ =>
+        {
+            try
+            {
+                ci.GetResult(task());
+            }
+            catch (Exception e)
+            {
+                synch.InnerException = e;
+                throw;
+            }
+            finally
+            {
+                synch.EndMessageLoop();
+            }
+        }, null);
+        synch.BeginMessageLoop();
+        SynchronizationContext.SetSynchronizationContext(oldContext);
+        synch.Dispose();
+    }
+
+    public void RunSyncWithoutReturnValue<T1>(Func<T1, Task> task, T1 a1)
+    {
+        var oldContext = SynchronizationContext.Current;
+        var synch = new ExclusiveSynchronizationContext();
+        SynchronizationContext.SetSynchronizationContext(synch);
+        synch.Post(async _ =>
+        {
+            try
+            {
+                ci.GetResult(task(a1));
+            }
+            catch (Exception e)
+            {
+                synch.InnerException = e;
+                throw;
+            }
+            finally
+            {
+                synch.EndMessageLoop();
+            }
+        }, null);
+        synch.BeginMessageLoop();
+        SynchronizationContext.SetSynchronizationContext(oldContext);
+    }
+
+    public void RunSyncWithoutReturnValue<T1, T2>(Func<T1, T2, Task> task, T1 a1, T2 a2)
+    {
+        var oldContext = SynchronizationContext.Current;
+        var synch = new ExclusiveSynchronizationContext();
+        SynchronizationContext.SetSynchronizationContext(synch);
+        synch.Post(async _ =>
+        {
+            try
+            {
+                ci.GetResult(task(a1, a2));
+            }
+            catch (Exception e)
+            {
+                synch.InnerException = e;
+                throw;
+            }
+            finally
+            {
+                synch.EndMessageLoop();
+            }
+        }, null);
+        synch.BeginMessageLoop();
+        SynchronizationContext.SetSynchronizationContext(oldContext);
+        synch.Dispose();
+    }
+
+    public void RunSyncWithoutReturnValue<T1, T2, T3>(Func<T1, T2, T3, Task> task, T1 a1, T2 a2, T3 a3)
+    {
+        var oldContext = SynchronizationContext.Current;
+        var synch = new ExclusiveSynchronizationContext();
+        SynchronizationContext.SetSynchronizationContext(synch);
+        synch.Post(async _ =>
+        {
+            try
+            {
+                ci.GetResult(task(a1, a2, a3));
+            }
+            catch (Exception e)
+            {
+                synch.InnerException = e;
+                throw;
+            }
+            finally
+            {
+                synch.EndMessageLoop();
+            }
+        }, null);
+        synch.BeginMessageLoop();
+        SynchronizationContext.SetSynchronizationContext(oldContext);
+        synch.Dispose();
+    }
+
+    private async Task<T> Await<T>(Task<T> t)
+    {
+        return await t;
+    }
+
+    private async Task Await(Task t)
+    {
+        await t;
+    }
+
     private class ExclusiveSynchronizationContext : SynchronizationContext, IDisposable
     {
         private static Type type = typeof(ExclusiveSynchronizationContext);
@@ -316,31 +312,6 @@ public class AsyncHelper
         private readonly AutoResetEvent workItemsWaiting = new(false);
         private bool done;
         public Exception InnerException { get; set; }
-
-        public void Dispose()
-        {
-            workItemsWaiting.Dispose();
-        }
-
-        public override void Send(SendOrPostCallback d, object state)
-        {
-            throw new Exception("WeCannotSendToOurSameThread");
-        }
-
-        public override void Post(SendOrPostCallback d, object state)
-        {
-            lock (items)
-            {
-                items.Enqueue(Tuple.Create(d, state));
-            }
-
-            workItemsWaiting.Set();
-        }
-
-        public void EndMessageLoop()
-        {
-            Post(_ => done = true, null);
-        }
 
         public void BeginMessageLoop()
         {
@@ -369,6 +340,32 @@ public class AsyncHelper
         {
             return this;
         }
+
+        public void Dispose()
+        {
+            workItemsWaiting.Dispose();
+        }
+
+        public void EndMessageLoop()
+        {
+            Post(_ => done = true, null);
+        }
+
+        public override void Post(SendOrPostCallback d, object state)
+        {
+            lock (items)
+            {
+                items.Enqueue(Tuple.Create(d, state));
+            }
+
+            workItemsWaiting.Set();
+        }
+
+        public override void Send(SendOrPostCallback d, object state)
+        {
+            throw new Exception("WeCannotSendToOurSameThread");
+        }
     }
+
     // Udělat pro IAsyncResult (dědí z něho Task) i IAsyncOperation
 }
