@@ -90,8 +90,6 @@ public class AsyncHelper
     /// <summary>
     ///     Execute's an T> method which has a T return type synchronously
     /// </summary>
-    /// <typeparam name="T">Return Type</typeparam>
-    /// <param name="task">T> method to execute</param>
     public T RunSync<T, T1>(Func<T1, T> task, T1 a1)
     {
         var oldContext = SynchronizationContext.Current;
@@ -123,15 +121,14 @@ public class AsyncHelper
     /// <summary>
     ///     Execute's an T> method which has a T return type synchronously
     /// </summary>
-    /// <typeparam name="T">Return Type</typeparam>
-    /// <param name="task">T> method to execute</param>
-    public T RunSync<T, T1, T2>(Func<T1, T2, T> task, T1 a1, T2 a2)
+
+    public T? RunSync<T, T1, T2>(Func<T1, T2, T> task, T1 a1, T2 a2)
     {
         var oldContext = SynchronizationContext.Current;
         var synch = new ExclusiveSynchronizationContext();
         SynchronizationContext.SetSynchronizationContext(synch);
-        T ret = default;
-        synch.Post(async _ =>
+        T? ret = default;
+        synch.Post(_ =>
         {
             try
             {
@@ -195,7 +192,7 @@ public class AsyncHelper
         var oldContext = SynchronizationContext.Current;
         var synch = new ExclusiveSynchronizationContext();
         SynchronizationContext.SetSynchronizationContext(synch);
-        synch.Post(async _ =>
+        synch.Post(_ =>
         {
             try
             {
@@ -311,7 +308,7 @@ public class AsyncHelper
 
         private readonly AutoResetEvent workItemsWaiting = new(false);
         private bool done;
-        public Exception InnerException { get; set; }
+        public Exception? InnerException { get; set; }
 
         public void BeginMessageLoop()
         {
