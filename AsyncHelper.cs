@@ -28,19 +28,6 @@ public class AsyncHelper
         }
     }
 
-    public static Dictionary<string, object> MergeDictionaries(Dictionary<string, Action> potentiallyValid,
-            Dictionary<string, Func<Task>> potentiallyValidAsync)
-    {
-        var actionsMerge = new Dictionary<string, object>(potentiallyValid.Count + potentiallyValidAsync.Count);
-        if (potentiallyValid != null)
-            foreach (var item in potentiallyValid)
-                actionsMerge.Add(item.Key, item.Value);
-        if (potentiallyValidAsync != null)
-            foreach (var item in potentiallyValidAsync)
-                actionsMerge.Add(item.Key, item.Value);
-        return actionsMerge;
-    }
-
     /// <summary>
     ///     To all regions insert comments whats not and what working
     ///     Not working with Directory.GetFilesMoreMascAsync - with use https://stackoverflow.com/a/34518914 OK
