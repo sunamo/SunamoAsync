@@ -4,12 +4,6 @@ internal partial class ThrowEx
 
 
     #region Other
-    internal static string FullNameOfExecutedCode()
-    {
-        Tuple<string, string, string> placeOfExc = Exceptions.PlaceOfException();
-        string f = FullNameOfExecutedCode(placeOfExc.Item1, placeOfExc.Item2, true);
-        return f;
-    }
 
     static string FullNameOfExecutedCode(object type, string methodName, bool fromThrowEx = false)
     {
@@ -45,18 +39,5 @@ internal partial class ThrowEx
         return string.Concat(typeFullName, ".", methodName);
     }
 
-    internal static bool ThrowIsNotNull(string? exception, bool reallyThrow = true)
-    {
-        if (exception != null)
-        {
-            Debugger.Break();
-            if (reallyThrow)
-            {
-                throw new Exception(exception);
-            }
-            return true;
-        }
-        return false;
-    }
     #endregion
 }
