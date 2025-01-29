@@ -3,10 +3,6 @@ namespace SunamoAsync._sunamo.SunamoExceptions;
 internal sealed partial class Exceptions
 {
     #region Other
-    internal static string CheckBefore(string before)
-    {
-        return string.IsNullOrWhiteSpace(before) ? string.Empty : before + ": ";
-    }
 
     internal static string TextOfExceptions(Exception ex, bool alsoInner = true)
     {
@@ -24,34 +20,6 @@ internal sealed partial class Exceptions
         return r;
     }
 
-    internal static Tuple<string, string, string> PlaceOfException(
-bool fillAlsoFirstTwo = true)
-    {
-        StackTrace st = new();
-        var v = st.ToString();
-        var l = v.Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries).ToList();
-        l.RemoveAt(0);
-        var i = 0;
-        string type = string.Empty;
-        string methodName = string.Empty;
-        for (; i < l.Count; i++)
-        {
-            var item = l[i];
-            if (fillAlsoFirstTwo)
-                if (!item.StartsWith("   at ThrowEx"))
-                {
-                    TypeAndMethodName(item, out type, out methodName);
-                    fillAlsoFirstTwo = false;
-                }
-            if (item.StartsWith("at System."))
-            {
-                l.Add(string.Empty);
-                l.Add(string.Empty);
-                break;
-            }
-        }
-        return new Tuple<string, string, string>(type, methodName, string.Join(Environment.NewLine, l));
-    }
     internal static void TypeAndMethodName(string l, out string type, out string methodName)
     {
         var s2 = l.Split("at ")[1].Trim();
@@ -77,17 +45,5 @@ bool fillAlsoFirstTwo = true)
     #region IsNullOrWhitespace
     readonly static StringBuilder sbAdditionalInfoInner = new();
     readonly static StringBuilder sbAdditionalInfo = new();
-    internal static string AddParams()
-    {
-        sbAdditionalInfo.Insert(0, Environment.NewLine);
-        sbAdditionalInfo.Insert(0, "Outer:");
-        sbAdditionalInfo.Insert(0, Environment.NewLine);
-        sbAdditionalInfoInner.Insert(0, Environment.NewLine);
-        sbAdditionalInfoInner.Insert(0, "Inner:");
-        sbAdditionalInfoInner.Insert(0, Environment.NewLine);
-        var addParams = sbAdditionalInfo.ToString();
-        var addParamsInner = sbAdditionalInfoInner.ToString();
-        return addParams + addParamsInner;
-    }
     #endregion
 }
