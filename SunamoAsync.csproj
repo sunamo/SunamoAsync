@@ -20,6 +20,7 @@
     <Compile Remove="_sunamo\FS.cs" />
     <Compile Remove="_sunamo\SH.cs" />
     <Compile Remove="_sunamo\TypesDelegates.cs" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="*" Pack="True" />
   </ItemGroup>
   <ItemGroup>
     <None Include="readme.md" Pack="True" PackagePath="." />
