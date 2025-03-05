@@ -1,6 +1,4 @@
 namespace SunamoAsync._sunamo;
-using System;
-using System.Threading.Tasks;
 
 internal class TypesDelegates
 {
