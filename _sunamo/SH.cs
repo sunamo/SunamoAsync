@@ -10,7 +10,7 @@ internal class SH
         r = sb.ToString();
         return r;
     }
-    internal static List<string> SplitCharMore(string s, params char[] dot)
+    internal static List<string> SplitChar(string s, params char[] dot)
     {
         return s.Split(dot, StringSplitOptions.RemoveEmptyEntries).ToList();
     }
