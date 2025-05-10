@@ -14,7 +14,7 @@ internal class SH
     {
         return s.Split(dot, StringSplitOptions.RemoveEmptyEntries).ToList();
     }
-    internal static List<string> SplitMore(string s, params string[] dot)
+    internal static List<string> Split(string s, params string[] dot)
     {
         return s.Split(dot, StringSplitOptions.RemoveEmptyEntries).ToList();
     }
