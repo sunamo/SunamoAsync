@@ -351,5 +351,5 @@ public class AsyncHelper
         }
     }
 
-    // Udělat pro IAsyncResult (dědí z něho Task) i IAsyncOperation
+    // Create for IAsyncResult (Task inherits from it) and IAsyncOperation
 }
