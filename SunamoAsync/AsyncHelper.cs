@@ -1,3 +1,5 @@
+// EN: Variable names have been checked and replaced with self-descriptive names
+// CZ: Názvy proměnných byly zkontrolovány a nahrazeny samopopisnými názvy
 namespace SunamoAsync;
 
 public class AsyncHelper
@@ -10,16 +12,16 @@ public class AsyncHelper
 
     public static async Task
 
-        InvokeFuncTaskOrAction(object o)
+        InvokeFuncTaskOrAction(object actionOrFunc)
     {
-        var t = o.GetType();
-        if (t == typeof(Action))
+        var objectType = actionOrFunc.GetType();
+        if (objectType == typeof(Action))
         {
-            (o as Action).Invoke();
+            (actionOrFunc as Action).Invoke();
         }
-        else if (t == typeof(Func<Task>))
+        else if (objectType == typeof(Func<Task>))
         {
-            var taskVoid = o as Func<Task>;
+            var taskVoid = actionOrFunc as Func<Task>;
 #if ASYNC
             await
 #endif
@@ -42,9 +44,9 @@ public class AsyncHelper
 
         #region 1. ConfigureAwait(true)
 
-        var t = task.Conf();
-        var t2 = t.GetAwaiter();
-        result = t2.GetResult();
+        var configuredTask = task.Conf();
+        var taskAwaiter = configuredTask.GetAwaiter();
+        result = taskAwaiter.GetResult();
 
         #endregion 1. ConfigureAwait(true)
 
@@ -89,9 +91,9 @@ public class AsyncHelper
             {
                 ret = task(a1);
             }
-            catch (Exception e)
+            catch (Exception exception)
             {
-                synch.InnerException = e;
+                synch.InnerException = exception;
                 throw;
             }
             finally
@@ -121,9 +123,9 @@ public class AsyncHelper
             {
                 ret = task(a1, a2);
             }
-            catch (Exception e)
+            catch (Exception exception)
             {
-                synch.InnerException = e;
+                synch.InnerException = exception;
                 throw;
             }
             finally
@@ -154,9 +156,9 @@ public class AsyncHelper
             {
                 ret = task(a1, a2, a3);
             }
-            catch (Exception e)
+            catch (Exception exception)
             {
-                synch.InnerException = e;
+                synch.InnerException = exception;
                 throw;
             }
             finally
@@ -185,9 +187,9 @@ public class AsyncHelper
             {
                 ci.GetResult(task());
             }
-            catch (Exception e)
+            catch (Exception exception)
             {
-                synch.InnerException = e;
+                synch.InnerException = exception;
                 throw;
             }
             finally
@@ -211,9 +213,9 @@ public class AsyncHelper
             {
                 ci.GetResult(task(a1));
             }
-            catch (Exception e)
+            catch (Exception exception)
             {
-                synch.InnerException = e;
+                synch.InnerException = exception;
                 throw;
             }
             finally
@@ -236,9 +238,9 @@ public class AsyncHelper
             {
                 ci.GetResult(task(a1, a2));
             }
-            catch (Exception e)
+            catch (Exception exception)
             {
-                synch.InnerException = e;
+                synch.InnerException = exception;
                 throw;
             }
             finally
@@ -262,9 +264,9 @@ public class AsyncHelper
             {
                 ci.GetResult(task(a1, a2, a3));
             }
-            catch (Exception e)
+            catch (Exception exception)
             {
-                synch.InnerException = e;
+                synch.InnerException = exception;
                 throw;
             }
             finally
@@ -277,14 +279,14 @@ public class AsyncHelper
         synch.Dispose();
     }
 
-    private async Task<T> Await<T>(Task<T> t)
+    private async Task<T> Await<T>(Task<T> taskToAwait)
     {
-        return await t;
+        return await taskToAwait;
     }
 
-    private async Task Await(Task t)
+    private async Task Await(Task taskToAwait)
     {
-        await t;
+        await taskToAwait;
     }
 
     private class ExclusiveSynchronizationContext : SynchronizationContext, IDisposable
