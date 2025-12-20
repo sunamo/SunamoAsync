@@ -1,18 +1,14 @@
 // EN: Variable names have been checked and replaced with self-descriptive names
 // CZ: Názvy proměnných byly zkontrolovány a nahrazeny samopopisnými názvy
 namespace SunamoAsync;
-
-public class AsyncHelper
+public partial class AsyncHelper
 {
     public static AsyncHelper ci = new();
-
     private AsyncHelper()
     {
     }
 
-    public static async Task
-
-        InvokeFuncTaskOrAction(object actionOrFunc)
+    public static async Task InvokeFuncTaskOrAction(object actionOrFunc)
     {
         var objectType = actionOrFunc.GetType();
         if (objectType == typeof(Action))
@@ -25,7 +21,7 @@ public class AsyncHelper
 #if ASYNC
             await
 #endif
-                taskVoid();
+            taskVoid();
             ;
         }
     }
@@ -35,33 +31,23 @@ public class AsyncHelper
     ///     Not working with Directory.GetFilesMoreMascAsync - with use https://stackoverflow.com/a/34518914 OK
     ///     Task.Run<>(async () => await FunctionAsync()).Result;
     /// </summary>
-    /// <typeparam name="T"></typeparam>
-    /// <param name="task"></param>
+    /// <typeparam name = "T"></typeparam>
+    /// <param name = "task"></param>
     public T GetResult<T>(Task<T> task)
     {
         T result = default;
         task.LogExceptions();
-
-        #region 1. ConfigureAwait(true)
-
+#region 1. ConfigureAwait(true)
         var configuredTask = task.Conf();
         var taskAwaiter = configuredTask.GetAwaiter();
         result = taskAwaiter.GetResult();
-
-        #endregion 1. ConfigureAwait(true)
-
-        #region 2. Sync
-
+#endregion 1. ConfigureAwait(true)
+#region 2. Sync
         //result = task.Result;
-
-        #endregion 2. Sync
-
-        #region 3. await
-
+#endregion 2. Sync
+#region 3. await
         //result = Await<T>(task);
-
-        #endregion 3. await
-
+#endregion 3. await
         return result;
     }
 
@@ -110,7 +96,6 @@ public class AsyncHelper
     /// <summary>
     ///     Execute's an T> method which has a T return type synchronously
     /// </summary>
-
     public T? RunSync<T, T1, T2>(Func<T1, T2, T> task, T1 a1, T2 a2)
     {
         var oldContext = SynchronizationContext.Current;
@@ -142,8 +127,8 @@ public class AsyncHelper
     /// <summary>
     ///     Execute's an T> method which has a T return type synchronously
     /// </summary>
-    /// <typeparam name="T">Return Type</typeparam>
-    /// <param name="task">T> method to execute</param>
+    /// <typeparam name = "T">Return Type</typeparam>
+    /// <param name = "task">T> method to execute</param>
     public T RunSync<T, T1, T2, T3>(Func<T1, T2, T3, T> task, T1 a1, T2 a2, T3 a3)
     {
         var oldContext = SynchronizationContext.Current;
@@ -175,7 +160,7 @@ public class AsyncHelper
     /// <summary>
     ///     Execute's an T> method which has a void return value synchronously
     /// </summary>
-    /// <param name="task">T> method to execute</param>
+    /// <param name = "task">T> method to execute</param>
     public void RunSyncWithoutReturnValue(Func<Task> task)
     {
         var oldContext = SynchronizationContext.Current;
@@ -252,106 +237,4 @@ public class AsyncHelper
         SynchronizationContext.SetSynchronizationContext(oldContext);
         synch.Dispose();
     }
-
-    public void RunSyncWithoutReturnValue<T1, T2, T3>(Func<T1, T2, T3, Task> task, T1 a1, T2 a2, T3 a3)
-    {
-        var oldContext = SynchronizationContext.Current;
-        var synch = new ExclusiveSynchronizationContext();
-        SynchronizationContext.SetSynchronizationContext(synch);
-        synch.Post(async _ =>
-        {
-            try
-            {
-                ci.GetResult(task(a1, a2, a3));
-            }
-            catch (Exception exception)
-            {
-                synch.InnerException = exception;
-                throw;
-            }
-            finally
-            {
-                synch.EndMessageLoop();
-            }
-        }, null);
-        synch.BeginMessageLoop();
-        SynchronizationContext.SetSynchronizationContext(oldContext);
-        synch.Dispose();
-    }
-
-    private async Task<T> Await<T>(Task<T> taskToAwait)
-    {
-        return await taskToAwait;
-    }
-
-    private async Task Await(Task taskToAwait)
-    {
-        await taskToAwait;
-    }
-
-    private class ExclusiveSynchronizationContext : SynchronizationContext, IDisposable
-    {
-        private static Type type = typeof(ExclusiveSynchronizationContext);
-
-        private readonly Queue<Tuple<SendOrPostCallback, object>> items = new();
-
-        private readonly AutoResetEvent workItemsWaiting = new(false);
-        private bool done;
-        public Exception? InnerException { get; set; }
-
-        public void BeginMessageLoop()
-        {
-            while (!done)
-            {
-                Tuple<SendOrPostCallback, object> task = null;
-                lock (items)
-                {
-                    if (items.Count > 0) task = items.Dequeue();
-                }
-
-                if (task != null)
-                {
-                    task.Item1(task.Item2);
-                    if (InnerException != null) // the method threw an exeption
-                        throw new Exception("AsyncHelpersRunMethodThrewAnException" + ". " + InnerException);
-                }
-                else
-                {
-                    workItemsWaiting.WaitOne();
-                }
-            }
-        }
-
-        public override SynchronizationContext CreateCopy()
-        {
-            return this;
-        }
-
-        public void Dispose()
-        {
-            workItemsWaiting.Dispose();
-        }
-
-        public void EndMessageLoop()
-        {
-            Post(_ => done = true, null);
-        }
-
-        public override void Post(SendOrPostCallback d, object state)
-        {
-            lock (items)
-            {
-                items.Enqueue(Tuple.Create(d, state));
-            }
-
-            workItemsWaiting.Set();
-        }
-
-        public override void Send(SendOrPostCallback d, object state)
-        {
-            throw new Exception("WeCannotSendToOurSameThread");
-        }
-    }
-
-    // Create for IAsyncResult (Task inherits from it) and IAsyncOperation
 }
