@@ -1,7 +1,5 @@
-// EN: Variable names have been checked and replaced with self-descriptive names
-// CZ: Názvy proměnných byly zkontrolovány a nahrazeny samopopisnými názvy
-
 namespace SunamoAsync._sunamo.SunamoExceptions;
+
 // © www.sunamo.cz. All Rights Reserved.
 internal sealed partial class Exceptions
 {
@@ -26,7 +24,7 @@ internal sealed partial class Exceptions
     #endregion
 
     #region IsNullOrWhitespace
-    readonly static StringBuilder sbAdditionalInfoInner = new();
-    readonly static StringBuilder sbAdditionalInfo = new();
+    internal readonly static StringBuilder AdditionalInfoInnerStringBuilder = new();
+    internal readonly static StringBuilder AdditionalInfoStringBuilder = new();
     #endregion
 }

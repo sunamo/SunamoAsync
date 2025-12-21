@@ -1,44 +1,40 @@
-// EN: Variable names have been checked and replaced with self-descriptive names
-// CZ: Názvy proměnných byly zkontrolovány a nahrazeny samopopisnými názvy
 namespace SunamoAsync._sunamo;
 
 //namespace SunamoAsync._sunamo.SunamoExceptions._AddedToAllCsproj;
 internal class FS
 {
-    internal static void CreateUpfoldersPsysicallyUnlessThere(string nad)
+    internal static void CreateUpfoldersPsysicallyUnlessThere(string path)
     {
-        CreateFoldersPsysicallyUnlessThere(Path.GetDirectoryName(nad));
+        CreateFoldersPsysicallyUnlessThere(Path.GetDirectoryName(path));
     }
-    internal static void CreateFoldersPsysicallyUnlessThere(string nad)
+    internal static void CreateFoldersPsysicallyUnlessThere(string path)
     {
-        ThrowEx.IsNullOrEmpty("nad", nad);
-        //ThrowEx.IsNotWindowsPathFormat("nad", nad);
-        if (Directory.Exists(nad))
+        ThrowEx.IsNullOrEmpty("path", path);
+        //ThrowEx.IsNotWindowsPathFormat("path", path);
+        if (Directory.Exists(path))
         {
             return;
         }
-        List<string> slozkyKVytvoreni = new List<string>
+        List<string> foldersToCreate = new List<string>
 {
-nad
+path
 };
         while (true)
         {
-            nad = Path.GetDirectoryName(nad);
-            
-            if (Directory.Exists(nad))
+            path = Path.GetDirectoryName(path);
+
+            if (Directory.Exists(path))
             {
                 break;
             }
-            string kopia = nad;
-            slozkyKVytvoreni.Add(kopia);
+            foldersToCreate.Add(path);
         }
-        slozkyKVytvoreni.Reverse();
-        foreach (string item in slozkyKVytvoreni)
+        foldersToCreate.Reverse();
+        foreach (string item in foldersToCreate)
         {
-            string folder = item;
-            if (!Directory.Exists(folder))
+            if (!Directory.Exists(item))
             {
-                Directory.CreateDirectory(folder);
+                Directory.CreateDirectory(item);
             }
         }
     }

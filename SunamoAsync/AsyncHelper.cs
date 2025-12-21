@@ -1,9 +1,11 @@
+namespace SunamoAsync;
+
+// variables names: ok
 // EN: Variable names have been checked and replaced with self-descriptive names
 // CZ: Názvy proměnných byly zkontrolovány a nahrazeny samopopisnými názvy
-namespace SunamoAsync;
 public partial class AsyncHelper
 {
-    public static AsyncHelper ci = new();
+    public static AsyncHelper Instance = new();
     private AsyncHelper()
     {
     }
@@ -22,7 +24,6 @@ public partial class AsyncHelper
             await
 #endif
             taskVoid();
-            ;
         }
     }
 
@@ -65,17 +66,17 @@ public partial class AsyncHelper
     /// <summary>
     ///     Execute's an T> method which has a T return type synchronously
     /// </summary>
-    public T RunSync<T, T1>(Func<T1, T> task, T1 a1)
+    public T RunSync<T, T1>(Func<T1, T> task, T1 argument1)
     {
         var oldContext = SynchronizationContext.Current;
         var synch = new ExclusiveSynchronizationContext();
         SynchronizationContext.SetSynchronizationContext(synch);
-        T ret = default;
+        T result = default;
         synch.Post(async _ =>
         {
             try
             {
-                ret = task(a1);
+                result = task(argument1);
             }
             catch (Exception exception)
             {
@@ -90,23 +91,23 @@ public partial class AsyncHelper
         synch.BeginMessageLoop();
         SynchronizationContext.SetSynchronizationContext(oldContext);
         synch.Dispose();
-        return ret;
+        return result;
     }
 
     /// <summary>
     ///     Execute's an T> method which has a T return type synchronously
     /// </summary>
-    public T? RunSync<T, T1, T2>(Func<T1, T2, T> task, T1 a1, T2 a2)
+    public T? RunSync<T, T1, T2>(Func<T1, T2, T> task, T1 argument1, T2 argument2)
     {
         var oldContext = SynchronizationContext.Current;
         var synch = new ExclusiveSynchronizationContext();
         SynchronizationContext.SetSynchronizationContext(synch);
-        T? ret = default;
+        T? result = default;
         synch.Post(_ =>
         {
             try
             {
-                ret = task(a1, a2);
+                result = task(argument1, argument2);
             }
             catch (Exception exception)
             {
@@ -121,7 +122,7 @@ public partial class AsyncHelper
         synch.BeginMessageLoop();
         SynchronizationContext.SetSynchronizationContext(oldContext);
         synch.Dispose();
-        return ret;
+        return result;
     }
 
     /// <summary>
@@ -129,17 +130,17 @@ public partial class AsyncHelper
     /// </summary>
     /// <typeparam name = "T">Return Type</typeparam>
     /// <param name = "task">T> method to execute</param>
-    public T RunSync<T, T1, T2, T3>(Func<T1, T2, T3, T> task, T1 a1, T2 a2, T3 a3)
+    public T RunSync<T, T1, T2, T3>(Func<T1, T2, T3, T> task, T1 argument1, T2 argument2, T3 argument3)
     {
         var oldContext = SynchronizationContext.Current;
         var synch = new ExclusiveSynchronizationContext();
         SynchronizationContext.SetSynchronizationContext(synch);
-        T ret = default;
+        T result = default;
         synch.Post(async _ =>
         {
             try
             {
-                ret = task(a1, a2, a3);
+                result = task(argument1, argument2, argument3);
             }
             catch (Exception exception)
             {
@@ -154,7 +155,7 @@ public partial class AsyncHelper
         synch.BeginMessageLoop();
         SynchronizationContext.SetSynchronizationContext(oldContext);
         synch.Dispose();
-        return ret;
+        return result;
     }
 
     /// <summary>
@@ -170,7 +171,7 @@ public partial class AsyncHelper
         {
             try
             {
-                ci.GetResult(task());
+                Instance.GetResult(task());
             }
             catch (Exception exception)
             {
@@ -187,7 +188,7 @@ public partial class AsyncHelper
         synch.Dispose();
     }
 
-    public void RunSyncWithoutReturnValue<T1>(Func<T1, Task> task, T1 a1)
+    public void RunSyncWithoutReturnValue<T1>(Func<T1, Task> task, T1 argument1)
     {
         var oldContext = SynchronizationContext.Current;
         var synch = new ExclusiveSynchronizationContext();
@@ -196,7 +197,7 @@ public partial class AsyncHelper
         {
             try
             {
-                ci.GetResult(task(a1));
+                Instance.GetResult(task(argument1));
             }
             catch (Exception exception)
             {
@@ -212,7 +213,7 @@ public partial class AsyncHelper
         SynchronizationContext.SetSynchronizationContext(oldContext);
     }
 
-    public void RunSyncWithoutReturnValue<T1, T2>(Func<T1, T2, Task> task, T1 a1, T2 a2)
+    public void RunSyncWithoutReturnValue<T1, T2>(Func<T1, T2, Task> task, T1 argument1, T2 argument2)
     {
         var oldContext = SynchronizationContext.Current;
         var synch = new ExclusiveSynchronizationContext();
@@ -221,7 +222,7 @@ public partial class AsyncHelper
         {
             try
             {
-                ci.GetResult(task(a1, a2));
+                Instance.GetResult(task(argument1, argument2));
             }
             catch (Exception exception)
             {

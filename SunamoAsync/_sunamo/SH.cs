@@ -1,5 +1,3 @@
-// EN: Variable names have been checked and replaced with self-descriptive names
-// CZ: Názvy proměnných byly zkontrolovány a nahrazeny samopopisnými názvy
 namespace SunamoAsync._sunamo;
 
 internal class SH
@@ -12,17 +10,17 @@ internal class SH
         result = stringBuilder.ToString();
         return result;
     }
-    internal static List<string> SplitChar(string text, params char[] dot)
+    internal static List<string> SplitChar(string text, params char[] delimiters)
     {
-        return text.Split(dot, StringSplitOptions.RemoveEmptyEntries).ToList();
+        return text.Split(delimiters, StringSplitOptions.RemoveEmptyEntries).ToList();
     }
-    internal static List<string> Split(string text, params string[] dot)
+    internal static List<string> Split(string text, params string[] delimiters)
     {
-        return text.Split(dot, StringSplitOptions.RemoveEmptyEntries).ToList();
+        return text.Split(delimiters, StringSplitOptions.RemoveEmptyEntries).ToList();
     }
-    internal static List<string> SplitNone(string text, params string[] deli)
+    internal static List<string> SplitNone(string text, params string[] delimiters)
     {
-        return text.Split(deli, StringSplitOptions.None).ToList();
+        return text.Split(delimiters, StringSplitOptions.None).ToList();
     }
     internal static string NullToStringOrDefault(object value)
     {

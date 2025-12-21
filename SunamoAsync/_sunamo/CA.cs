@@ -1,32 +1,30 @@
-// EN: Variable names have been checked and replaced with self-descriptive names
-// CZ: Názvy proměnných byly zkontrolovány a nahrazeny samopopisnými názvy
 namespace SunamoAsync._sunamo;
 
 internal class CA
 {
-    internal static bool IsListStringWrappedInArray<T>(List<T> v2)
+    internal static bool IsListStringWrappedInArray<T>(List<T> list)
     {
-        var first = v2.First().ToString();
-        if (v2.Count == 1 && (first == "System.Collections.Generic.List`1[System.String]" ||
+        var first = list.First().ToString();
+        if (list.Count == 1 && (first == "System.Collections.Generic.List`1[System.String]" ||
         first == "System.Collections.Generic.List`1[System.Object]")) return true;
         return false;
     }
-    internal static void InitFillWith(List<string> datas, int pocet, string initWith = "")
+    internal static void InitFillWith(List<string> list, int count, string initWith = "")
     {
-        InitFillWith<string>(datas, pocet, initWith);
+        InitFillWith<string>(list, count, initWith);
     }
-    internal static void InitFillWith<T>(List<T> datas, int pocet, T initWith)
+    internal static void InitFillWith<T>(List<T> list, int count, T initWith)
     {
-        for (int i = 0; i < pocet; i++)
+        for (int i = 0; i < count; i++)
         {
-            datas.Add(initWith);
+            list.Add(initWith);
         }
     }
-    internal static void InitFillWith<T>(List<T> arr, int columns)
+    internal static void InitFillWith<T>(List<T> list, int count)
     {
-        for (int i = 0; i < columns; i++)
+        for (int i = 0; i < count; i++)
         {
-            arr.Add(default);
+            list.Add(default);
         }
     }
 }

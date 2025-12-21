@@ -1,25 +1,23 @@
-// EN: Variable names have been checked and replaced with self-descriptive names
-// CZ: Názvy proměnných byly zkontrolovány a nahrazeny samopopisnými názvy
 namespace SunamoAsync._sunamo.SunamoExtensions;
 
 internal static class TaskExtensions
 {
     #region For easy copy from TaskExtensionsSunamo.cs
-    internal static ConfiguredTaskAwaitable Conf(this Task t)
+    internal static ConfiguredTaskAwaitable Conf(this Task task)
     {
-        return t.ConfigureAwait(true);
+        return task.ConfigureAwait(true);
     }
 
-    internal static ConfiguredTaskAwaitable<T> Conf<T>(this Task<T> t)
+    internal static ConfiguredTaskAwaitable<T> Conf<T>(this Task<T> task)
     {
-        return t.ConfigureAwait(true);
+        return task.ConfigureAwait(true);
     }
 
     internal static void LogExceptions(this Task task)
     {
-        task.ContinueWith(t =>
+        task.ContinueWith(completedTask =>
             {
-                var aggException = t.Exception.Flatten();
+                var aggException = completedTask.Exception.Flatten();
                 throw new Exception(Exceptions.TextOfExceptions(aggException));
             },
             TaskContinuationOptions.OnlyOnFaulted);

@@ -1,9 +1,10 @@
+namespace SunamoAsync;
+
 // EN: Variable names have been checked and replaced with self-descriptive names
 // CZ: Názvy proměnných byly zkontrolovány a nahrazeny samopopisnými názvy
-namespace SunamoAsync;
 public partial class AsyncHelper
 {
-    public void RunSyncWithoutReturnValue<T1, T2, T3>(Func<T1, T2, T3, Task> task, T1 a1, T2 a2, T3 a3)
+    public void RunSyncWithoutReturnValue<T1, T2, T3>(Func<T1, T2, T3, Task> task, T1 argument1, T2 argument2, T3 argument3)
     {
         var oldContext = SynchronizationContext.Current;
         var synch = new ExclusiveSynchronizationContext();
@@ -12,7 +13,7 @@ public partial class AsyncHelper
         {
             try
             {
-                ci.GetResult(task(a1, a2, a3));
+                Instance.GetResult(task(argument1, argument2, argument3));
             }
             catch (Exception exception)
             {
@@ -29,19 +30,8 @@ public partial class AsyncHelper
         synch.Dispose();
     }
 
-    private async Task<T> Await<T>(Task<T> taskToAwait)
-    {
-        return await taskToAwait;
-    }
-
-    private async Task Await(Task taskToAwait)
-    {
-        await taskToAwait;
-    }
-
     private class ExclusiveSynchronizationContext : SynchronizationContext, IDisposable
     {
-        private static Type type = typeof(ExclusiveSynchronizationContext);
         private readonly Queue<Tuple<SendOrPostCallback, object>> items = new();
         private readonly AutoResetEvent workItemsWaiting = new(false);
         private bool done;
@@ -86,17 +76,17 @@ public partial class AsyncHelper
             Post(_ => done = true, null);
         }
 
-        public override void Post(SendOrPostCallback d, object state)
+        public override void Post(SendOrPostCallback callback, object state)
         {
             lock (items)
             {
-                items.Enqueue(Tuple.Create(d, state));
+                items.Enqueue(Tuple.Create(callback, state));
             }
 
             workItemsWaiting.Set();
         }
 
-        public override void Send(SendOrPostCallback d, object state)
+        public override void Send(SendOrPostCallback callback, object state)
         {
             throw new Exception("WeCannotSendToOurSameThread");
         }
