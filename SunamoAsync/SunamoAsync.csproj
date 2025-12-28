@@ -16,10 +16,6 @@
     <PackageReleaseNotes>feat: Added net10.0 to TargetFrameworks</PackageReleaseNotes>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Remove="_sunamo\CA.cs" />
-    <Compile Remove="_sunamo\FS.cs" />
-    <Compile Remove="_sunamo\SH.cs" />
-    <Compile Remove="_sunamo\TypesDelegates.cs" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.3" Pack="True" />
   </ItemGroup>
   <ItemGroup>
