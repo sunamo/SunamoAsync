@@ -1,4 +1,3 @@
-// variables names: ok
 namespace SunamoAsync._sunamo.SunamoExtensions;
 
 internal static class TaskExtensions
