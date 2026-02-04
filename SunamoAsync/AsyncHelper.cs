@@ -1,4 +1,3 @@
-// variables names: ok
 namespace SunamoAsync;
 
 // variables names: ok
