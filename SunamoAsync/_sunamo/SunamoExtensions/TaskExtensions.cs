@@ -2,7 +2,6 @@ namespace SunamoAsync._sunamo.SunamoExtensions;
 
 internal static class TaskExtensions
 {
-    #region For easy copy from TaskExtensionsSunamo.cs
     /// <summary>
     /// Configures the task to continue on the captured context.
     /// </summary>
@@ -40,5 +39,4 @@ internal static class TaskExtensions
             },
             TaskContinuationOptions.OnlyOnFaulted);
     }
-    #endregion
 }

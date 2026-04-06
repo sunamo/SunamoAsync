@@ -15,9 +15,9 @@ public partial class AsyncHelper
     public void RunSyncWithoutReturnValue<T1, T2, T3>(Func<T1, T2, T3, Task> task, T1 argument1, T2 argument2, T3 argument3)
     {
         var oldContext = SynchronizationContext.Current;
-        var synch = new ExclusiveSynchronizationContext();
-        SynchronizationContext.SetSynchronizationContext(synch);
-        synch.Post(_ =>
+        var exclusiveContext = new ExclusiveSynchronizationContext();
+        SynchronizationContext.SetSynchronizationContext(exclusiveContext);
+        exclusiveContext.Post(_ =>
         {
             try
             {
@@ -25,35 +25,35 @@ public partial class AsyncHelper
             }
             catch (Exception exception)
             {
-                synch.InnerException = exception;
+                exclusiveContext.InnerException = exception;
                 throw;
             }
             finally
             {
-                synch.EndMessageLoop();
+                exclusiveContext.EndMessageLoop();
             }
         }, null);
-        synch.BeginMessageLoop();
+        exclusiveContext.BeginMessageLoop();
         SynchronizationContext.SetSynchronizationContext(oldContext);
-        synch.Dispose();
+        exclusiveContext.Dispose();
     }
 
     private class ExclusiveSynchronizationContext : SynchronizationContext, IDisposable
     {
-        private readonly Queue<Tuple<SendOrPostCallback, object?>> items = new();
+        private readonly Queue<Tuple<SendOrPostCallback, object?>> callbackQueue = new();
         private readonly AutoResetEvent workItemsWaiting = new(false);
-        private bool done;
+        private bool isDone;
         public Exception? InnerException { get; set; }
 
         public void BeginMessageLoop()
         {
-            while (!done)
+            while (!isDone)
             {
                 Tuple<SendOrPostCallback, object?>? workItem = null;
-                lock (items)
+                lock (callbackQueue)
                 {
-                    if (items.Count > 0)
-                        workItem = items.Dequeue();
+                    if (callbackQueue.Count > 0)
+                        workItem = callbackQueue.Dequeue();
                 }
 
                 if (workItem != null)
@@ -81,14 +81,14 @@ public partial class AsyncHelper
 
         public void EndMessageLoop()
         {
-            Post(_ => done = true, null);
+            Post(_ => isDone = true, null);
         }
 
         public override void Post(SendOrPostCallback callback, object? state)
         {
-            lock (items)
+            lock (callbackQueue)
             {
-                items.Enqueue(Tuple.Create(callback, state));
+                callbackQueue.Enqueue(Tuple.Create(callback, state));
             }
 
             workItemsWaiting.Set();
