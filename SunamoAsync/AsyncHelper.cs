@@ -1,8 +1,6 @@
 namespace SunamoAsync;
 
 // variables names: ok
-// EN: Variable names have been checked and replaced with self-descriptive names
-// CZ: Názvy proměnných byly zkontrolovány a nahrazeny samopopisnými názvy
 /// <summary>
 /// Helper class for running async methods synchronously.
 /// </summary>
@@ -41,12 +39,10 @@ public partial class AsyncHelper
     }
 
     /// <summary>
-    ///     To all regions insert comments whats not and what working
-    ///     Not working with Directory.GetFilesMoreMascAsync - with use https://stackoverflow.com/a/34518914 OK
-    ///     Task.Run&lt;&gt;(async () =&gt; await FunctionAsync()).Result;
+    /// Gets the result of a typed task synchronously.
     /// </summary>
-    /// <typeparam name = "T">The type of the task result.</typeparam>
-    /// <param name = "task">The task to get result from.</param>
+    /// <typeparam name="T">The type of the task result.</typeparam>
+    /// <param name="task">The task to get result from.</param>
     public T GetResult<T>(Task<T> task)
     {
         task.LogExceptions();
@@ -75,8 +71,12 @@ public partial class AsyncHelper
     }
 
     /// <summary>
-    ///     Execute's an T> method which has a T return type synchronously
+    /// Executes a function with one parameter synchronously and returns its result.
     /// </summary>
+    /// <typeparam name="T">Return type.</typeparam>
+    /// <typeparam name="T1">First parameter type.</typeparam>
+    /// <param name="task">Function to execute.</param>
+    /// <param name="argument1">First argument.</param>
     public T RunSync<T, T1>(Func<T1, T> task, T1 argument1)
     {
         var oldContext = SynchronizationContext.Current;
@@ -106,8 +106,14 @@ public partial class AsyncHelper
     }
 
     /// <summary>
-    ///     Execute's an T> method which has a T return type synchronously
+    /// Executes a function with two parameters synchronously and returns its result.
     /// </summary>
+    /// <typeparam name="T">Return type.</typeparam>
+    /// <typeparam name="T1">First parameter type.</typeparam>
+    /// <typeparam name="T2">Second parameter type.</typeparam>
+    /// <param name="task">Function to execute.</param>
+    /// <param name="argument1">First argument.</param>
+    /// <param name="argument2">Second argument.</param>
     public T? RunSync<T, T1, T2>(Func<T1, T2, T> task, T1 argument1, T2 argument2)
     {
         var oldContext = SynchronizationContext.Current;
@@ -137,16 +143,16 @@ public partial class AsyncHelper
     }
 
     /// <summary>
-    ///     Execute's an T> method which has a T return type synchronously
+    /// Executes a function with three parameters synchronously and returns its result.
     /// </summary>
-    /// <typeparam name = "T">Return Type</typeparam>
-    /// <typeparam name = "T1">First parameter type</typeparam>
-    /// <typeparam name = "T2">Second parameter type</typeparam>
-    /// <typeparam name = "T3">Third parameter type</typeparam>
-    /// <param name = "task">T> method to execute</param>
-    /// <param name = "argument1">First argument</param>
-    /// <param name = "argument2">Second argument</param>
-    /// <param name = "argument3">Third argument</param>
+    /// <typeparam name="T">Return type.</typeparam>
+    /// <typeparam name="T1">First parameter type.</typeparam>
+    /// <typeparam name="T2">Second parameter type.</typeparam>
+    /// <typeparam name="T3">Third parameter type.</typeparam>
+    /// <param name="task">Function to execute.</param>
+    /// <param name="argument1">First argument.</param>
+    /// <param name="argument2">Second argument.</param>
+    /// <param name="argument3">Third argument.</param>
     public T RunSync<T, T1, T2, T3>(Func<T1, T2, T3, T> task, T1 argument1, T2 argument2, T3 argument3)
     {
         var oldContext = SynchronizationContext.Current;
@@ -176,9 +182,9 @@ public partial class AsyncHelper
     }
 
     /// <summary>
-    ///     Execute's an T> method which has a void return value synchronously
+    /// Executes an async method synchronously without return value.
     /// </summary>
-    /// <param name = "task">T> method to execute</param>
+    /// <param name="task">Async method to execute.</param>
     public void RunSyncWithoutReturnValue(Func<Task> task)
     {
         var oldContext = SynchronizationContext.Current;
@@ -206,11 +212,11 @@ public partial class AsyncHelper
     }
 
     /// <summary>
-    ///     Execute's an async method with one parameter synchronously without return value
+    /// Executes an async method with one parameter synchronously without return value.
     /// </summary>
-    /// <typeparam name = "T1">First parameter type</typeparam>
-    /// <param name = "task">Async method to execute</param>
-    /// <param name = "argument1">First argument</param>
+    /// <typeparam name="T1">First parameter type.</typeparam>
+    /// <param name="task">Async method to execute.</param>
+    /// <param name="argument1">First argument.</param>
     public void RunSyncWithoutReturnValue<T1>(Func<T1, Task> task, T1 argument1)
     {
         var oldContext = SynchronizationContext.Current;
@@ -237,13 +243,13 @@ public partial class AsyncHelper
     }
 
     /// <summary>
-    ///     Execute's an async method with two parameters synchronously without return value
+    /// Executes an async method with two parameters synchronously without return value.
     /// </summary>
-    /// <typeparam name = "T1">First parameter type</typeparam>
-    /// <typeparam name = "T2">Second parameter type</typeparam>
-    /// <param name = "task">Async method to execute</param>
-    /// <param name = "argument1">First argument</param>
-    /// <param name = "argument2">Second argument</param>
+    /// <typeparam name="T1">First parameter type.</typeparam>
+    /// <typeparam name="T2">Second parameter type.</typeparam>
+    /// <param name="task">Async method to execute.</param>
+    /// <param name="argument1">First argument.</param>
+    /// <param name="argument2">Second argument.</param>
     public void RunSyncWithoutReturnValue<T1, T2>(Func<T1, T2, Task> task, T1 argument1, T2 argument2)
     {
         var oldContext = SynchronizationContext.Current;
