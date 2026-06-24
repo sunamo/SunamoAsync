@@ -2,16 +2,6 @@ namespace SunamoAsync;
 
 public partial class AsyncHelper
 {
-    /// <summary>
-    /// Executes an async method with three parameters synchronously without return value.
-    /// </summary>
-    /// <typeparam name="T1">First parameter type.</typeparam>
-    /// <typeparam name="T2">Second parameter type.</typeparam>
-    /// <typeparam name="T3">Third parameter type.</typeparam>
-    /// <param name="task">Async method to execute.</param>
-    /// <param name="argument1">First argument.</param>
-    /// <param name="argument2">Second argument.</param>
-    /// <param name="argument3">Third argument.</param>
     public void RunSyncWithoutReturnValue<T1, T2, T3>(Func<T1, T2, T3, Task> task, T1 argument1, T2 argument2, T3 argument3)
     {
         var oldContext = SynchronizationContext.Current;

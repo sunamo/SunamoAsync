@@ -3,12 +3,6 @@ namespace SunamoAsync._sunamo.SunamoExceptions;
 // © www.sunamo.cz. All Rights Reserved.
 internal sealed partial class Exceptions
 {
-    /// <summary>
-    /// Gets the text representation of exception messages.
-    /// </summary>
-    /// <param name="exception">The exception to process.</param>
-    /// <param name="isIncludingInner">Whether to include inner exception messages.</param>
-    /// <returns>String containing all exception messages.</returns>
     internal static string TextOfExceptions(Exception exception, bool isIncludingInner = true)
     {
         if (exception == null) return string.Empty;
