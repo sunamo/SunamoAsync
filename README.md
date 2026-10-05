@@ -1,5 +1,10 @@
 # SunamoAsync
 
+## Short description
+
+Pomocná knihovna pro synchronní spuštění asynchronního kódu pomocí vlastního synchronizačního kontextu. Umožňuje také jednotně volat asynchronní i synchronní akce.
+
+
 Run async code synchronously and invoke async/sync actions uniformly.
 
 ## Overview
