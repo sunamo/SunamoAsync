@@ -2,6 +2,14 @@ namespace SunamoAsync;
 
 public partial class AsyncHelper
 {
+    /// <summary>
+    /// Run sync without return value t 1 t 2 t 3.
+    /// </summary>
+    /// <param name="task">The task.</param>
+    /// <param name="argument1">The argument 1.</param>
+    /// <param name="argument2">The argument 2.</param>
+    /// <param name="argument3">The argument 3.</param>
+    /// <returns>The run sync without return value t 1 t 2 t 3 result.</returns>
     public void RunSyncWithoutReturnValue<T1, T2, T3>(Func<T1, T2, T3, Task> task, T1 argument1, T2 argument2, T3 argument3)
     {
         var oldContext = SynchronizationContext.Current;
