@@ -1,6 +1,5 @@
 namespace SunamoAsync;
 
-// variables names: ok
 public partial class AsyncHelper
 {
     public static AsyncHelper Instance = new();
